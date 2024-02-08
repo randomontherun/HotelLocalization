@@ -3,6 +3,7 @@ import {FormControl, FormGroup} from '@angular/forms';
 import {HttpClient, HttpResponse,HttpHeaders} from "@angular/common/http";
 import {Observable, throwError} from 'rxjs';
 import {catchError, map} from "rxjs/operators";
+import {resourceChangeTicket} from "@angular/compiler-cli/src/ngtsc/core";
 
 
 
@@ -28,6 +29,7 @@ export class AppComponent implements OnInit{
   currentCheckInVal!:string;
   currentCheckOutVal!:string;
   welcomeMessages: string[] = [];
+  presentationMessage: string = '';
 
   fetchWelcomeMessages() {
     this.httpClient.get<string[]>('http://localhost:8080/welcome')
@@ -42,7 +44,15 @@ export class AppComponent implements OnInit{
       });
   }
 
+  fetchPresentationDetails(): void {
+    this.httpClient.get('http://localhost:8080/presentation', { responseType: 'text' })
+      .subscribe(response => {
+        this.presentationMessage = response;
+      });
+  }
+
     ngOnInit(){
+      this.fetchPresentationDetails();
       this.fetchWelcomeMessages();
 
       this.roomsearch= new FormGroup({
