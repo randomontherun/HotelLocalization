@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {HttpClient, HttpResponse,HttpHeaders} from "@angular/common/http";
-import { Observable } from 'rxjs';
-import {map} from "rxjs/operators";
+import {Observable, throwError} from 'rxjs';
+import {catchError, map} from "rxjs/operators";
 
 
 
@@ -27,8 +27,24 @@ export class AppComponent implements OnInit{
   request!:ReserveRoomRequest;
   currentCheckInVal!:string;
   currentCheckOutVal!:string;
+  welcomeMessages: string[] = [];
+
+  fetchWelcomeMessages() {
+    this.httpClient.get<string[]>('http://localhost:8080/welcome')
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching welcome messages:', error);
+          return throwError(error); // Rethrow the error
+        })
+      )
+      .subscribe(response => {
+        this.welcomeMessages = response;
+      });
+  }
 
     ngOnInit(){
+      this.fetchWelcomeMessages();
+
       this.roomsearch= new FormGroup({
         checkin: new FormControl(' '),
         checkout: new FormControl(' ')

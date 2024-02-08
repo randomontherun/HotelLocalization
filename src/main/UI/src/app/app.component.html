@@ -19,11 +19,17 @@
     </nav>
   </div>
 </header>
+<div class="welcome-messages" *ngIf="welcomeMessages">
+  <h2>Welcome Messages</h2>
+  <div *ngFor="let message of welcomeMessages" style="font-size: 24px;">
+    {{ message }}
+  </div>
+</div>
 <main id="wrapper">
   <div class="scene" id="welcome">
     <article class="content">
 
- 
+
 
       <div class="row">
         <div class=""col-12>
@@ -58,7 +64,7 @@
               </div>
               </form>
 
-        
+
         </div>
       </div>
 
