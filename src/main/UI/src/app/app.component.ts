@@ -62,14 +62,19 @@ export class AppComponent implements OnInit{
     });
   }
 
-    onSubmit({value,valid}:{value:Roomsearch,valid:boolean}){
-      this.getAll().subscribe(
-
-        rooms => {console.log(Object.values(rooms)[0]);this.rooms=<Room[]>Object.values(rooms)[0]; }
-
-
-      );
-    }
+  onSubmit({value, valid}: {value: Roomsearch, valid: boolean}) {
+    this.getAll().subscribe(
+      rooms => {
+        this.rooms = <Room[]>Object.values(rooms)[0];
+        this.rooms.forEach(room => {
+          // Perform crude conversion for CAD and EUR
+          // Assuming a simple conversion rate for demonstration purposes
+          room.priceCAD = (parseFloat(room.price) * 1.25).toFixed(2); // Convert to CAD
+          room.priceEUR = (parseFloat(room.price) * 0.88).toFixed(2); // Convert to EUR
+        });
+      }
+    );
+  }
     reserveRoom(value:string){
       this.request = new ReserveRoomRequest(value, this.currentCheckInVal, this.currentCheckOutVal);
 
@@ -116,6 +121,8 @@ export interface Room{
   roomNumber:string;
   price:string;
   links:string;
+  priceCAD?: string; // Add priceCAD variable
+  priceEUR?: string; // Add priceEUR variable
 
 }
 export class ReserveRoomRequest {
