@@ -12,7 +12,7 @@ public class PresentationController {
     @GetMapping("/presentation")
     public String getPresentationInfo() {
         // Get the presentation information with time conversions
-        String presentationInfo = timeConverter.getPresentationInfo();
+        String presentationInfo = timeConverter.PresentationConversion();
         return presentationInfo;
     }
 }

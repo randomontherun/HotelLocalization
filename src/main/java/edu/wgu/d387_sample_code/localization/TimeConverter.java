@@ -7,7 +7,7 @@ import java.time.format.DateTimeFormatter;
 
 public class TimeConverter {
 
-    public String getPresentationInfo() {
+    public String PresentationConversion() {
         LocalDateTime localDateTime = LocalDateTime.of(2024, 3, 9, 12, 0); // March 9th, 2024 at 12:00 PM
         ZonedDateTime zonedDateTimeET = localDateTime.atZone(ZoneId.of("America/New_York")); // Eastern Time
         ZonedDateTime zonedDateTimeMT = zonedDateTimeET.withZoneSameInstant(ZoneId.of("America/Denver")); // Mountain Time
