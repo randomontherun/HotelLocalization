@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import {HttpClient, HttpResponse,HttpHeaders} from "@angular/common/http";
-import { Observable } from 'rxjs';
-import {map} from "rxjs/operators";
+import {Observable, throwError} from 'rxjs';
+import {catchError, map} from "rxjs/operators";
+import {resourceChangeTicket} from "@angular/compiler-cli/src/ngtsc/core";
 
 
 
@@ -27,8 +28,33 @@ export class AppComponent implements OnInit{
   request!:ReserveRoomRequest;
   currentCheckInVal!:string;
   currentCheckOutVal!:string;
+  welcomeMessages: string[] = [];
+  presentationMessage: string = '';
+
+  fetchWelcomeMessages() {
+    this.httpClient.get<string[]>('http://localhost:8080/welcome')
+      .pipe(
+        catchError(error => {
+          console.error('Error fetching welcome messages:', error);
+          return throwError(error); // Rethrow the error
+        })
+      )
+      .subscribe(response => {
+        this.welcomeMessages = response;
+      });
+  }
+
+  fetchPresentationDetails(): void {
+    this.httpClient.get('http://localhost:8080/presentation', { responseType: 'text' })
+      .subscribe(response => {
+        this.presentationMessage = response;
+      });
+  }
 
     ngOnInit(){
+      this.fetchPresentationDetails();
+      this.fetchWelcomeMessages();
+
       this.roomsearch= new FormGroup({
         checkin: new FormControl(' '),
         checkout: new FormControl(' ')
@@ -46,14 +72,19 @@ export class AppComponent implements OnInit{
     });
   }
 
-    onSubmit({value,valid}:{value:Roomsearch,valid:boolean}){
-      this.getAll().subscribe(
-
-        rooms => {console.log(Object.values(rooms)[0]);this.rooms=<Room[]>Object.values(rooms)[0]; }
-
-
-      );
-    }
+  onSubmit({value, valid}: {value: Roomsearch, valid: boolean}) {
+    this.getAll().subscribe(
+      rooms => {
+        this.rooms = <Room[]>Object.values(rooms)[0];
+        this.rooms.forEach(room => {
+          // Perform crude conversion for CAD and EUR
+          // Assuming a simple conversion rate for demonstration purposes
+          room.priceCAD = (parseFloat(room.price) * 1.25).toFixed(2); // Convert to CAD
+          room.priceEUR = (parseFloat(room.price) * 0.88).toFixed(2); // Convert to EUR
+        });
+      }
+    );
+  }
     reserveRoom(value:string){
       this.request = new ReserveRoomRequest(value, this.currentCheckInVal, this.currentCheckOutVal);
 
@@ -100,6 +131,8 @@ export interface Room{
   roomNumber:string;
   price:string;
   links:string;
+  priceCAD?: string; // Add priceCAD variable
+  priceEUR?: string; // Add priceEUR variable
 
 }
 export class ReserveRoomRequest {

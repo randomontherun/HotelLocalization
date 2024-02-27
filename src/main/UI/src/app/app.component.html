@@ -19,11 +19,22 @@
     </nav>
   </div>
 </header>
+<div class="welcome-messages" *ngIf="welcomeMessages">
+  <h2>Welcome Messages</h2>
+  <div *ngFor="let message of welcomeMessages" style="font-size: 24px;">
+    {{ message }}
+  </div>
+</div>
+
+<div>
+  <h2>Presentation Information</h2>
+  <p style="font-size: 24px;">{{ presentationMessage }}</p>
+</div>
 <main id="wrapper">
   <div class="scene" id="welcome">
     <article class="content">
 
- 
+
 
       <div class="row">
         <div class=""col-12>
@@ -58,7 +69,7 @@
               </div>
               </form>
 
-        
+
         </div>
       </div>
 
@@ -75,7 +86,9 @@
                 </td>
                 <td>
                   <strong>Room #: {{room.roomNumber}}</strong><br/>
-                  <strong>Price: ${{room.price}}</strong>
+                  <strong>Price: ${{room.price}}</strong><br/>
+                  <strong>Price (CAD): C${{ room.priceCAD }}</strong><br/>
+                  <strong>Price (EUR): €{{ room.priceEUR }}</strong>
                 </td>
                 <td>
                   <button type="submit" class="btn btn-primary" (click)="reserveRoom(room.id)">Reserve</button>
